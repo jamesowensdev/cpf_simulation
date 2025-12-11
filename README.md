@@ -70,7 +70,7 @@ sim_output <- run_simulation(
 
 The simulation completed successfully.
 
-- **Duration:** 1.1866 seconds
+- **Duration:** 1.0469 seconds
 - **Total Steps:** 1000
 - **Seed:** 404
 
@@ -126,7 +126,7 @@ data-fig-align="center" />
 
 ## Temporal Animation
 
-- **Animation Render Time:** 245.5349
+- **Animation Render Time:** 236.3193 seconds
 
 The animation below visualizes the agent’s path in real-time. The
 counter in the top-left tracks the cumulative detections across the
@@ -138,4 +138,4 @@ times for high step count simulations.
 *(Note: The detection logic includes a ‘Cooldown’ period, preventing the
 counter from skyrocketing while the agent stands still.)*
 
-![](readme_assets/readme_assets/simulation_gifs/README_Example_Run.gif)
+![](readme_assets/simulation_gifs/README_Example_Run.gif)

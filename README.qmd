@@ -119,7 +119,7 @@ sim_output$plot
 ```
 
 ## Temporal Animation
--   **Animation Render Time:** `r if(!is.null(sim_output$metadata$animation_time)) round(as.numeric(sim_output$metadata$animation_time), 4) else "N/A"`
+-   **Animation Render Time:** `r if(!is.null(sim_output$metadata$animation_time)) round(as.numeric(sim_output$metadata$animation_time), 4) else "N/A"` seconds
 
 The animation below visualizes the agent's path in real-time. The counter in the top-left tracks the cumulative detections across the network.
 
@@ -127,4 +127,4 @@ This animation feature is `r FALSE` by default to prevent lengthy animation time
 
 *(Note: The detection logic includes a 'Cooldown' period, preventing the counter from skyrocketing while the agent stands still.)*
 
-![](readme_assets/simulation_gifs//README_Example_Run.gif)
+![](simulation_gifs//README_Example_Run.gif)
