@@ -1,3 +1,13 @@
+---
+title: "Central Place Foraging & Camera Trap Simulation"
+author: "James Owens"
+format: gfm
+extract-media: "readme_assets"
+execute:
+  echo: true
+  warning: false
+  message: false
+---
 ```{r setup, include=FALSE}
 library(knitr)
 library(tidyverse)

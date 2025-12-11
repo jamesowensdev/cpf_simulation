@@ -441,7 +441,6 @@ run_simulation <- function(
                 coord_fixed(xlim = c(0, 100), ylim = c(0, 100)) +
                 theme_minimal()
   
-  print(sim_plot)
   if(create_gif == TRUE) {
     generate_animation(results, camera_coords, detections_df, radius, sim_name)
   }
