@@ -1,6 +1,7 @@
 ---
 title: "Central Place Foraging & Camera Trap Simulation"
 author: "James Owens"
+position: "PhD Student - School of Biological Sciences @ Queen's University Belfast"
 format: gfm
 extract-media: "readme_assets"
 execute:
@@ -125,6 +126,6 @@ The animation below visualizes the agent's path in real-time. The counter in the
 
 This animation feature is `r FALSE` by default to prevent lengthy animation times for high step count simulations.
 
-*(Note: The detection logic includes a 'Cooldown' period, preventing the counter from skyrocketing while the agent stands still.)*
+*(Note: The detection logic includes a 'Cooldown' period, preventing the counter from skyrocketing, with the model detecting the CPF at every step as it passes through the camera radius.)*
 
-![](readme_assets/simulation_gifs//README_Example_Run.gif)
+![](readme_assets/simulation_gifs/README_Example_Run.gif)
