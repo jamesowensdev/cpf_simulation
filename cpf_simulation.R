@@ -212,7 +212,7 @@ generate_animation <- function(results, camera_coords, detections_df, radius, si
                         y = "Y Coordinate",
                         shape = "Camera"
                       ) +
-                      theme(plot.title = element_text(size = 14, face = "bold"))
+                      theme(plot.title = element_text(size = 10, face = "bold"))
   
   folder_name <- "simulation_gifs"
   if (!dir.exists(folder_name)) {
@@ -352,6 +352,7 @@ run_simulation <- function(
   cooldown = NULL,
   create_gif = FALSE){
   
+  start_time <- Sys.time()
   message("Setting up R Enviroment...")
   load_dependencies()
   message("")
@@ -413,6 +414,9 @@ run_simulation <- function(
   }
   message("Simulation Complete!")
 
+  end_time <- Sys.time()
+  run_duration <- as.numeric(difftime(end_time, start_time, units = "secs"))
+
   ##############################################################
   #                     Post-Processing                        #
   ##############################################################
@@ -440,9 +444,12 @@ run_simulation <- function(
                 annotate("point", x = nest_coords[1], y = nest_coords[2] , size = 3, color = "green") +
                 coord_fixed(xlim = c(0, 100), ylim = c(0, 100)) +
                 theme_minimal()
-  
+  anim_time <- NULL
   if(create_gif == TRUE) {
+    anim_start <- Sys.time()
     generate_animation(results, camera_coords, detections_df, radius, sim_name)
+    anim_end <- Sys.time()
+    anim_time <- as.numeric(difftime(anim_end, anim_start, units = "secs"))
   }
 
   ##############################################################
@@ -454,7 +461,9 @@ run_simulation <- function(
       sim_name = sim_name,
       seed = seed,
       steps = steps,
-      date_run = Sys.time()
+      date_run = start_time,
+      sim_duration = run_duration,
+      animation_time = anim_time
     ),
     movement = results, 
     detections = detections_df,

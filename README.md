@@ -41,11 +41,8 @@ Where:
 
 # Simulation Run
 
-We define a triangular array of 3 camera traps and simulate an agent for
-1,000 steps.
-
 ``` r
-# 1. Define Camera Locations (Triangular formation)
+# 1. Define Camera Locations
 camera_setup <- data.frame(
   x = c(20, 70, 80, 20, 80),
   y = c(20, 35, 20, 80, 80)
@@ -73,7 +70,7 @@ sim_output <- run_simulation(
 
 The simulation completed successfully.
 
-- **Duration:** N/A seconds
+- **Duration:** 1.1866 seconds
 - **Total Steps:** 1000
 - **Seed:** 404
 
@@ -129,11 +126,16 @@ data-fig-align="center" />
 
 ## Temporal Animation
 
+- **Animation Render Time:** 245.5349
+
 The animation below visualizes the agent’s path in real-time. The
 counter in the top-left tracks the cumulative detections across the
 network.
 
+This animation feature is FALSE by default to prevent lengthy animation
+times for high step count simulations.
+
 *(Note: The detection logic includes a ‘Cooldown’ period, preventing the
 counter from skyrocketing while the agent stands still.)*
 
-![](readme_assets/simulation_gifs/README_Example_Run.gif)
+![](readme_assets/readme_assets/simulation_gifs/README_Example_Run.gif)
