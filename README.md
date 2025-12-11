@@ -70,7 +70,7 @@ sim_output <- run_simulation(
 
 The simulation completed successfully.
 
-- **Duration:** 0.2137 seconds
+- **Duration:** 0.2196 seconds
 - **Total Steps:** 100
 - **Seed:** 404
 
@@ -125,7 +125,7 @@ data-fig-align="center" />
 
 ## Temporal Animation
 
-- **Animation Render Time:** 11.773 seconds
+- **Animation Render Time:** 11.6045 seconds
 
 The animation below visualizes the agent’s path in real-time. The
 counter in the top-left tracks the cumulative detections across the
@@ -138,4 +138,4 @@ times for high step count simulations.
 counter from skyrocketing, with the model detecting the CPF at every
 step as it passes through the camera radius.)*
 
-![](readme_assets/readme_assets/simulation_gifs/README_Example_Run.gif)
+![](readme_assets/simulation_gifs/README_Example_Run.gif)

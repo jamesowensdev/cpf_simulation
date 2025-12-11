@@ -128,4 +128,4 @@ This animation feature is `r FALSE` by default to prevent lengthy animation time
 
 *(Note: The detection logic includes a 'Cooldown' period, preventing the counter from skyrocketing, with the model detecting the CPF at every step as it passes through the camera radius.)*
 
-![](readme_assets/simulation_gifs/README_Example_Run.gif)
+![](simulation_gifs/README_Example_Run.gif)
