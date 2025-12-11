@@ -52,7 +52,7 @@ camera_setup <- data.frame(
 # Note: create_gif = TRUE will generate the animation file
 sim_output <- run_simulation(
   sim_name = "README_Example_Run",
-  steps = 1000,
+  steps = 100,
   seed = 404,          # Fixed seed for reproducibility
   nest_coords = c(50,50),
   inertia = 0.7,       # High inertia = smoother path
@@ -70,8 +70,8 @@ sim_output <- run_simulation(
 
 The simulation completed successfully.
 
-- **Duration:** 1.3694 seconds
-- **Total Steps:** 1000
+- **Duration:** 0.2137 seconds
+- **Total Steps:** 100
 - **Seed:** 404
 
 ## Detection Statistics
@@ -102,7 +102,6 @@ if(!is.null(sim_output$detections)) {
 | camera_id | Total_Hits | First_Sighting | Last_Sighting |
 |----------:|-----------:|---------------:|--------------:|
 |         2 |          1 |             82 |            82 |
-|         4 |          1 |            273 |           273 |
 
 Camera Trap Capture Log
 
@@ -126,7 +125,7 @@ data-fig-align="center" />
 
 ## Temporal Animation
 
-- **Animation Render Time:** 263.1921 seconds
+- **Animation Render Time:** 11.773 seconds
 
 The animation below visualizes the agent’s path in real-time. The
 counter in the top-left tracks the cumulative detections across the
