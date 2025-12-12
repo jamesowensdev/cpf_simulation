@@ -1,7 +1,5 @@
 ---
 title: "Central Place Foraging & Camera Trap Simulation"
-author: "James Owens"
-position: "PhD Student - School of Biological Sciences @ Queen's University Belfast"
 format: gfm
 extract-media: "readme_assets"
 execute:
@@ -9,6 +7,14 @@ execute:
   warning: false
   message: false
 ---
+
+# Prerequisites
+
+This simulation uses the following packages: *tidyverse. terra ,R6, gganimate, gifski, ggforce, checkmate*
+
+\
+Be sure to install them before running the script.
+
 ```{r setup, include=FALSE}
 library(knitr)
 library(tidyverse)
@@ -51,6 +57,7 @@ Where:
 -   $k$: Steepness of the decay curve.
 
 # Simulation Run
+
 ```{r run-simulation}
 # 1. Define Camera Locations
 camera_setup <- data.frame(
@@ -120,6 +127,7 @@ sim_output$plot
 ```
 
 ## Temporal Animation
+
 -   **Animation Render Time:** `r if(!is.null(sim_output$metadata$animation_time)) round(as.numeric(sim_output$metadata$animation_time), 4) else "N/A"` seconds
 
 The animation below visualizes the agent's path in real-time. The counter in the top-left tracks the cumulative detections across the network.

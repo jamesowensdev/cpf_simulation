@@ -1,26 +1,28 @@
-library(tidyverse)
-library(terra)
-library(R6)
-library(gganimate)
-library(gifski)
-library(ggforce)
+# library(tidyverse)
+# library(terra)
+# library(R6)
+# library(gganimate)
+# library(gifski)
+# library(ggforce)
+# library(checkmate)
 
 load_dependencies <- function() {
-  required_packages <- c("tidyverse", "terra", "R6", "gganimate", "gifski", "ggforce")
+  required_packages <- c("tidyverse", "terra", "R6", "gganimate", "gifski", "ggforce", "checkmate")
 
-  packages_to_load <- required_packages[!(required_packages %in% (.packages()))]
+  missing_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
 
-  if(length(packages_to_load) > 0) {
-    missing_packages <- packages_to_load[!(packages_to_load %in% installed.packages()[, "Package"])]
-
-    if(length(missing_packages) > 0 ) {
-      message("Installing missing packages: ", paste(missing_packages, collapse = ", "))
-      install.packages(missing_packages)
-    }
-  } else {
-    message("All dependencies already loaded")
+  if(length(missing_packages) > 0) {
+    stop("The following required packages are missing: ", 
+         paste(missing_packages, collapse = ", "), 
+         ".\nPlease install them manually using install.packages() to run this simulation.")
   }
+  
+  message("Loading dependencies...")
+  invisible(lapply(required_packages, library, character.only = TRUE))
+  message("Dependencies loaded.")
 }
+
+load_dependencies()
 
 ForagerAgent <- R6Class("ForagerAgent",
   public = list(
@@ -81,26 +83,30 @@ ForagerAgent <- R6Class("ForagerAgent",
       inertia <- self$inertia 
       magnitude <- 0
 
-      # While loop prevents the rare case that the change in path is a 180 turn, in which case the magnitude would be 0
-      # To prevent issues with the dx/dy normalisation for constant speed the noise is re-rolled.
-      while(magnitude < 0.0001){
-        brownian_x <- rnorm(1, mean = 0, sd = 1)
-        brownian_y <- rnorm(1, mean = 0, sd = 1)
+      brownian_x <- rnorm(1, mean = 0, sd = 1)
+      brownian_y <- rnorm(1, mean = 0, sd = 1)
 
-        if(self$velocity_x == 0 && self$velocity_y == 0) {
-          new_dx <- brownian_x
-          new_dy <- brownian_y
-        } else {
-          new_dx <- (self$velocity_x * inertia) + (brownian_x * (1 - inertia))
-          new_dy <- (self$velocity_y * inertia) + (brownian_y * (1 - inertia))
-        }
-        
-        magnitude <- sqrt(new_dx^2 + new_dy^2)
+      # If the agent is not moving we contribute the movement vector solely to brownian motion
+      if(self$velocity_x == 0 && self$velocity_y == 0) {
+        new_dx <- brownian_x
+        new_dy <- brownian_y
+      } else {
+        new_dx <- (self$velocity_x * inertia) + (brownian_x * (1 - inertia))
+        new_dy <- (self$velocity_y * inertia) + (brownian_y * (1 - inertia))
       }
-
-      # Calculate unit vector
-      dx <- (new_dx / magnitude)
-      dy <- (new_dy / magnitude)
+      
+      magnitude <- sqrt(new_dx^2 + new_dy^2)
+      
+      # panic clause to prevent rate case where  
+      if(magnitude < 0.0001) {
+        random_angle <- runif(1, 0, 2 * pi)
+      
+        dx <- cos(random_angle)
+        dy <- sin(random_angle)
+      } else {
+        dx <- (new_dx / magnitude)
+        dy <- (new_dy / magnitude)
+      }
 
       self$x <- self$x + dx
       self$y <- self$y + dy
@@ -335,14 +341,12 @@ CameraTrap <- R6Class("CameraTrap",
   
   }
 
-
 run_simulation <- function(
   sim_name = "cpf_simulation",
   steps = 1000,
   seed = 619,
   nest_coords = c(50,50),
   inertia = 0.7,
-  return_speed = NULL,
   p_food = 0.02,
   camera_coords = NULL,
   radius = NULL,
@@ -356,6 +360,15 @@ run_simulation <- function(
   message("Setting up R Enviroment...")
   load_dependencies()
   message("")
+
+  coll <- makeAssertCollection()
+  assert_data_frame(camera_coords, min.rows = 1, add = coll)
+  assert_number(radius, lower = 0, finite = TRUE, add = coll) 
+  assert_number(cooldown, lower = 0, add = coll)
+  reportAssertions(coll)
+
+
+  
 
   message("**************************************************")
   message(paste("--- Starting Simulation:", sim_name, "---"))
@@ -374,24 +387,22 @@ run_simulation <- function(
   forager <- ForagerAgent$new(nest_x = nest_coords[1], nest_y = nest_coords[2], 
                               inertia = inertia)
   
-  # Preallocating result tibble size including inital state for agent path.
-  results <- tibble(
-    step = 0:steps,
-    x = numeric(steps + 1),
-    y = numeric(steps + 1),
-    state = character(steps + 1)
-  )
-  results$x[1] <- forager$x
-  results$y[1] <- forager$y
-  results$state <- "Foraging"
+  # Preallocating results vectors to be combined into tibble after simulation
+  pos_x <- numeric(steps + 1)
+  pos_y <- numeric(steps + 1)
+  agent_state <- character(steps + 1)
+
+  pos_x[1] <- forager$x
+  pos_y[1] <- forager$y
+  agent_state[1] <- "Foraging"
 
   ##############################################################
   #                   CAMERA TRAP SETUP                        #
   ##############################################################
   message("Initalising Camera Traps...")
   traps <- setup_camera_traps(camera_coords, radius, p_detection_max, inf_prop, steepness, cooldown)
-  detection_log <- list()
 
+  detection_log <- vector("list", steps)
 
   ##############################################################
   #                   Execute Simulation                       #
@@ -400,17 +411,24 @@ run_simulation <- function(
   # Execute event loop
   for(i in 1:steps) {
     forager$step(env)
-    detections <- check_all_traps(forager, traps, i)
-    # Reset seed each loop to avoid variation in random number rolls between varying detection sensitivities
-    set.seed(seed + i)
 
-    if(!is.null(detections)) {
-      detection_log <- c(detection_log, detections)
+
+    if (!exists(".Random.seed", .GlobalEnv)) {
+      stop("CRITICAL ERROR: Random Number Generator state (.Random.seed) not found. 
+          Please run set.seed() before starting the simulation loop.")
     }
 
-    results$x[i+1] <- forager$x
-    results$y[i+1] <- forager$y
-    results$state[i+1] <-forager$state
+    old_seed <- .Random.seed
+    set.seed(seed + i)
+    detections <- check_all_traps(forager, traps, i)
+    
+    detection_log[[i]] <- detections
+    
+    pos_x[i+1] <- forager$x
+    pos_y[i+1] <- forager$y
+    agent_state[i+1] <- forager$state
+    # Reset seed to original each loop to avoid variation in paths between simulations based on detection rate
+    .Random.seed <<- old_seed
   }
   message("Simulation Complete!")
 
@@ -420,15 +438,23 @@ run_simulation <- function(
   ##############################################################
   #                     Post-Processing                        #
   ##############################################################
-  message("Processing detection data...")
+  message("Processing data...")
+
+  results <- tibble::tibble(
+    step = 0:steps,
+    x = pos_x,
+    y = pos_y,
+    state = agent_state
+  )
+
+  detection_log <- detection_log[!sapply(detection_log, is.null)]
 
   if(length(detection_log) > 0) {
-    detections_df <- 
-      bind_rows(detection_log) |>
-      as_tibble()
-  } else
+    detections_df <- dplyr::bind_rows(detection_log)
+  } else {
     detections_df <- NULL
-
+  }
+  
   ##############################################################
   #                   Plotting & Animation                     #
   ##############################################################
@@ -444,8 +470,10 @@ run_simulation <- function(
                 annotate("point", x = nest_coords[1], y = nest_coords[2] , size = 3, color = "green") +
                 coord_fixed(xlim = c(0, 100), ylim = c(0, 100)) +
                 theme_minimal()
+  
   anim_time <- NULL
-  if(create_gif == TRUE) {
+
+  if(create_gif) {
     anim_start <- Sys.time()
     generate_animation(results, camera_coords, detections_df, radius, sim_name)
     anim_end <- Sys.time()

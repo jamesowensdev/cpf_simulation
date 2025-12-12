@@ -1,5 +1,13 @@
 # Central Place Foraging & Camera Trap Simulation
-James Owens
+
+
+# Prerequisites
+
+This simulation uses the following packages: *tidyverse. terra ,R6,
+gganimate, gifski, ggforce, checkmate*
+
+  
+Be sure to install them before running the script.
 
 # Project Overview
 
@@ -70,7 +78,7 @@ sim_output <- run_simulation(
 
 The simulation completed successfully.
 
-- **Duration:** 1.1718 seconds
+- **Duration:** 1.0665 seconds
 - **Total Steps:** 1000
 - **Seed:** 404
 
@@ -101,8 +109,7 @@ if(!is.null(sim_output$detections)) {
 
 | camera_id | Total_Hits | First_Sighting | Last_Sighting |
 |----------:|-----------:|---------------:|--------------:|
-|         2 |          1 |             82 |            82 |
-|         4 |          1 |            273 |           273 |
+|         2 |          1 |            945 |           945 |
 
 Camera Trap Capture Log
 
@@ -126,7 +133,7 @@ data-fig-align="center" />
 
 ## Temporal Animation
 
-- **Animation Render Time:** 295.0082 seconds
+- **Animation Render Time:** 296.0264 seconds
 
 The animation below visualizes the agent’s path in real-time. The
 counter in the top-left tracks the cumulative detections across the
