@@ -62,7 +62,7 @@ camera_setup <- data.frame(
 # Note: create_gif = TRUE will generate the animation file
 sim_output <- run_simulation(
   sim_name = "README_Example_Run",
-  steps = 100,
+  steps = 1000,
   seed = 404,          # Fixed seed for reproducibility
   nest_coords = c(50,50),
   inertia = 0.7,       # High inertia = smoother path

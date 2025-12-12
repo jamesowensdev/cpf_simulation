@@ -195,7 +195,7 @@ generate_animation <- function(results, camera_coords, detections_df, radius, si
                       annotate("point", x = 50, y = 50, size = 3, stroke = 2, color = "green") +
                       geom_text(aes(x = 2, y = 98, label = paste("Detections:", total_detections)), 
                         hjust = 0, 
-                        size = 6, 
+                        size = 4, 
                         fontface = "bold") +
                       scale_color_manual(values = c("Foraging" = "grey", 
                                "Returning" = "red")) +
