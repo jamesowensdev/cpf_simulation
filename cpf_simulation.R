@@ -450,7 +450,7 @@ run_simulation <- function(
   detection_log <- detection_log[!sapply(detection_log, is.null)]
 
   if(length(detection_log) > 0) {
-    detections_df <- dplyr::bind_rows(detection_log)
+    detections_df <- dplyr::bind_rows(unlist(detection_log, recursive = FALSE))
   } else {
     detections_df <- NULL
   }
