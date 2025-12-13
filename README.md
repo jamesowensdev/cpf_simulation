@@ -16,7 +16,7 @@ Place Forager (CPF)** moving through a resource-scattered environment.
 The agent’s movements are monitored by a network of **Camera Traps**
 that utilize probabilistic, distance-dependent detection logic.
 
-Theis model will act as a baseline for future development in analysing
+This model will act as a baseline for future development in analysing
 the effectiveness of current geographic profiling (GP) techniques in
 predicting nesting/breeding sites of a CPF against variable and often
 human-dominated landscapes.
